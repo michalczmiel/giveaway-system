@@ -1,0 +1,28 @@
+{
+  "name": "giveaway-system-client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "export": "next build && next export",
+    "start": "next start",
+    "format": "prettier 'src/**/*.{ts,tsx}' --write"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "lodash": "^4.17.15",
+    "next": "9.3.4",
+    "object-casing": "^0.0.3",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-hook-form": "^5.2.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.149",
+    "@types/node": "^13.11.0",
+    "@types/react": "^16.9.32",
+    "prettier": "^2.0.2",
+    "typescript": "^3.8.3"
+  }
+}

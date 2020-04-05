@@ -1,0 +1,16 @@
+{
+  "name": "giveaway-system-infrastructure",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "api:deploy": "serverless deploy",
+    "api:remove": "serverless remove",
+    "client:deploy": "serverless client deploy",
+    "client:remove": "serverless client remove"
+  },
+  "devDependencies": {
+    "serverless": "^1.67.0",
+    "serverless-finch": "^2.5.2",
+    "serverless-python-requirements": "^5.1.0"
+  }
+}

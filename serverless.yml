@@ -1,0 +1,72 @@
+service: giveaway-system
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: dev
+  region: eu-central-1
+  environment:
+    GIVEAWAY_ENTRY_TABLE_NAME: ${opt:stage, self:provider.stage}-Items
+    CLIENT_DEPLOY_BUCKET_NAME: giveaway-service-client-${self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:Scan
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+        - dynamodb:UpdateItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.GIVEAWAY_ENTRY_TABLE_NAME}"
+
+plugins:
+  - serverless-python-requirements
+  - serverless-finch
+
+functions:
+  create-giveaway-entry:
+    handler: api/giveaway.entry.handlers.create_giveaway_entry
+    events:
+      - http:
+          path: giveaway/entry
+          method: post
+          cors: true
+  get-giveaway-entry:
+    handler: api/giveaway.entry.handlers.get_giveaway_entry
+    events:
+      - http:
+          path: giveaway/entry/{id}
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    GiveawayEntryTable:
+      Type: "AWS::DynamoDB::Table"
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:provider.environment.GIVEAWAY_ENTRY_TABLE_NAME}
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+  client:
+    bucketName: ${self:provider.environment.CLIENT_DEPLOY_BUCKET_NAME}
+    distributionFolder: client/out
+
+package:
+  exclude:
+    - node_modules/**
+    - client/**
+    - yarn.lock
+    - .idea/**
+    - "**/.pytest_cache/**"
+    - "**/__pycache__/**"

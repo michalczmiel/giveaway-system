@@ -1,0 +1,10 @@
+.formField {
+  width: 100%;
+  margin-top: 24px;
+  display: flex;
+  margin-bottom: 24px;
+}
+
+.formFieldCheckbox {
+  max-width: 20px;
+}
