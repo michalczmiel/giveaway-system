@@ -66,6 +66,7 @@ package:
   exclude:
     - node_modules/**
     - client/**
+    - api/venv/**
     - yarn.lock
     - .idea/**
     - "**/.pytest_cache/**"

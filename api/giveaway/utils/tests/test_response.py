@@ -24,6 +24,6 @@ def test_create_response():
 
     assert response["body"]
     assert isinstance(response["body"], str)
-    assert response["status_code"]
-    assert isinstance(response["status_code"], int)
+    assert response["statusCode"]
+    assert isinstance(response["statusCode"], int)
 
