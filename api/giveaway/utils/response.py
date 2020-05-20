@@ -3,7 +3,6 @@ import dataclasses
 import uuid
 import datetime
 from typing import Any, Dict
-from http import HTTPStatus
 
 
 class EnhancedJSONEncoder(json.JSONEncoder):
@@ -19,7 +18,8 @@ class EnhancedJSONEncoder(json.JSONEncoder):
 
 Response = Dict
 
-def create_response(data: Any, status_code: HTTPStatus = HTTPStatus.OK) -> Response:
+
+def create_response(data: Any, status_code: int) -> Response:
     headers = {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": True,
@@ -27,6 +27,6 @@ def create_response(data: Any, status_code: HTTPStatus = HTTPStatus.OK) -> Respo
 
     return {
         "body": json.dumps(data, cls=EnhancedJSONEncoder),
-        "statusCode": status_code.value,
+        "statusCode": status_code,
         "headers": headers,
     }

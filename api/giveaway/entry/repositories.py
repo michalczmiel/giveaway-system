@@ -7,6 +7,7 @@ from typing import Dict
 import boto3
 
 from api.giveaway.entry.models import GiveawayEntry
+from api.giveaway.common.exceptions import NotFound
 
 
 class GiveawayEntryRepository(ABC):
@@ -58,5 +59,9 @@ class DynamoDbGiveawayEntryRepository(GiveawayEntryRepository):
                 'id': str(giveaway_entry_id),
             }
         )
+
+        if "Item" not in result:
+            raise NotFound("GiveawayEntry not found")
+
         item = result['Item']
         return cls.to_model(item)
