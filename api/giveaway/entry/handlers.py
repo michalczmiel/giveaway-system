@@ -17,7 +17,9 @@ def create_giveaway_entry(event: LambdaEvent, context) -> Response:
 
     giveaway_entry_dto = GiveawayService.create_giveaway_entry(input_dto=dto)
 
-    result_json = to_json_api(giveaway_entry_dto, resource_type="giveaway-entry")
+    result_json = to_json_api(
+        giveaway_entry_dto, resource_type="giveaway-entry"
+    )
 
     return create_response(result_json, status_code=http.HTTPStatus.CREATED)
 
@@ -26,9 +28,13 @@ def get_giveaway_entry(event: LambdaEvent, context) -> Response:
     giveaway_entry_id = event["pathParameters"]["id"]
 
     try:
-        giveaway_entry_dto = GiveawayService.get_giveaway_entry(giveaway_entry_id)
+        giveaway_entry_dto = GiveawayService.get_giveaway_entry(
+            giveaway_entry_id
+        )
 
-        result_json = to_json_api(giveaway_entry_dto, resource_type="giveaway-entry")
+        result_json = to_json_api(
+            giveaway_entry_dto, resource_type="giveaway-entry"
+        )
 
         return create_response(result_json, status_code=http.HTTPStatus.OK)
     except NotFound as exception:

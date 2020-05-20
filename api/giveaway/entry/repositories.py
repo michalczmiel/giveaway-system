@@ -36,7 +36,9 @@ class DynamoDbGiveawayEntryRepository(GiveawayEntryRepository):
             last_name=item["last_name"],
             email=item["email"],
             gdpr_accepted=item["gdpr_accepted"],
-            created_at=datetime.strptime(item["created_at"], '%Y-%m-%dT%H:%M:%S.%f'),
+            created_at=datetime.strptime(
+                item["created_at"], "%Y-%m-%dT%H:%M:%S.%f"
+            ),
         )
 
     @classmethod
@@ -47,21 +49,17 @@ class DynamoDbGiveawayEntryRepository(GiveawayEntryRepository):
             "last_name": giveaway_entry.last_name,
             "email": giveaway_entry.email,
             "gdpr_accepted": giveaway_entry.gdpr_accepted,
-            'created_at': giveaway_entry.created_at.isoformat(),
+            "created_at": giveaway_entry.created_at.isoformat(),
         }
         table.put_item(Item=item)
         return giveaway_entry
 
     @classmethod
     def get(cls, giveaway_entry_id: UUID) -> GiveawayEntry:
-        result = table.get_item(
-            Key={
-                'id': str(giveaway_entry_id),
-            }
-        )
+        result = table.get_item(Key={"id": str(giveaway_entry_id),})
 
         if "Item" not in result:
             raise NotFound("GiveawayEntry not found")
 
-        item = result['Item']
+        item = result["Item"]
         return cls.to_model(item)
