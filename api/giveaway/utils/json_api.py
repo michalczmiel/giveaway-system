@@ -1,4 +1,4 @@
-from typing import *
+from typing import Any, Dict
 
 
 def to_json_api(dto: Any, resource_type: str) -> Dict:
