@@ -1,3 +1,4 @@
+import http
 import datetime
 from uuid import UUID
 
@@ -20,9 +21,9 @@ def test_create_response():
             ),
         }
     }
-    response = create_response(data)
+    response = create_response(data, http.HTTPStatus.OK)
 
     assert response["body"]
     assert isinstance(response["body"], str)
     assert response["statusCode"]
-    assert isinstance(response["statusCode"], int)
+    assert response["statusCode"] == http.HTTPStatus.OK

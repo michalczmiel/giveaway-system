@@ -67,7 +67,10 @@ package:
     - node_modules/**
     - client/**
     - api/venv/**
+    - api/tests/**
     - yarn.lock
     - .idea/**
+    - package.json
+    - "**/.mypy_cache/**"
     - "**/.pytest_cache/**"
     - "**/__pycache__/**"

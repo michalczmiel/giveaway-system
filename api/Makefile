@@ -1,6 +1,7 @@
-.PHONY: format typecheck
+.PHONY: format typecheck test
 
 PROJECT_DIR=giveaway
+TESTS_DIR=tests
 
 all: format
 
@@ -9,3 +10,6 @@ format:
 
 typecheck:
 	mypy ${PROJECT_DIR}
+
+test:
+	pytest ${TESTS_DIR}
