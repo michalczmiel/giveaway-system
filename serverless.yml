@@ -20,11 +20,13 @@ provider:
 
 plugins:
   - serverless-python-requirements
+  - serverless-offline
   - serverless-finch
 
 functions:
   create-giveaway-entry:
     handler: api/giveaway.entry.handlers.create_giveaway_entry
+    package: {}
     events:
       - http:
           path: giveaway/entry
@@ -32,6 +34,7 @@ functions:
           cors: true
   get-giveaway-entry:
     handler: api/giveaway.entry.handlers.get_giveaway_entry
+    package: {}
     events:
       - http:
           path: giveaway/entry/{id}
@@ -58,6 +61,7 @@ resources:
 custom:
   pythonRequirements:
     dockerizePip: true
+    fileName: api/requirements.txt
   client:
     bucketName: ${self:provider.environment.CLIENT_DEPLOY_BUCKET_NAME}
     distributionFolder: client/out
