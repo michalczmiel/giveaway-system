@@ -4,6 +4,8 @@ import uuid
 import datetime
 from typing import Any, Dict
 
+from pydantic import ValidationError
+
 
 class EnhancedJSONEncoder(json.JSONEncoder):
     def default(self, o: Any):
@@ -19,6 +21,12 @@ class EnhancedJSONEncoder(json.JSONEncoder):
 Response = Dict
 
 
+def to_json(data: Any) -> str:
+    if isinstance(data, ValidationError):
+        return data.json()
+    return json.dumps(data, cls=EnhancedJSONEncoder)
+
+
 def create_response(data: Any, status_code: int) -> Response:
     headers = {
         "Access-Control-Allow-Origin": "*",
@@ -26,7 +34,7 @@ def create_response(data: Any, status_code: int) -> Response:
     }
 
     return {
-        "body": json.dumps(data, cls=EnhancedJSONEncoder),
+        "body": to_json(data),
         "statusCode": status_code,
         "headers": headers,
     }

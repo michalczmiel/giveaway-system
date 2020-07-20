@@ -1,2 +1,5 @@
-class Dto:
+from pydantic import BaseModel
+
+
+class Dto(BaseModel):
     pass

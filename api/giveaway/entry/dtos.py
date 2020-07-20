@@ -1,16 +1,15 @@
 from uuid import UUID, uuid4
 from datetime import datetime
-from dataclasses import dataclass
+from pydantic import EmailStr
 
 from api.giveaway.common.dtos import Dto
 from api.giveaway.entry.models import GiveawayEntry
 
 
-@dataclass(frozen=True)
 class GiveawayEntryInputDto(Dto):
     first_name: str
     last_name: str
-    email: str
+    email: EmailStr
     gdpr_accepted: bool
 
     def map_to_model(self) -> GiveawayEntry:
@@ -24,7 +23,6 @@ class GiveawayEntryInputDto(Dto):
         )
 
 
-@dataclass(frozen=True)
 class GiveawayEntryOutputDto(Dto):
     id: UUID
     first_name: str

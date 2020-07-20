@@ -1,6 +1,8 @@
 import json
 import http
 
+from pydantic import ValidationError
+
 from api.giveaway.utils.json_api import to_json_api
 from api.giveaway.utils.response import create_response, Response
 from api.giveaway.utils.lambda_types import LambdaEvent
@@ -13,7 +15,10 @@ def create_giveaway_entry(event: LambdaEvent, context) -> Response:
     data = json.loads(event["body"])
     attributes = data["data"]["attributes"]
 
-    dto = GiveawayEntryInputDto(**attributes)
+    try:
+        dto = GiveawayEntryInputDto(**attributes)
+    except ValidationError as error:
+        return create_response(error, status_code=http.HTTPStatus.BAD_REQUEST)
 
     giveaway_entry_dto = GiveawayService.create_giveaway_entry(input_dto=dto)
 
