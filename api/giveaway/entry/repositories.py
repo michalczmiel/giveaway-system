@@ -24,7 +24,7 @@ class GiveawayEntryRepository(ABC):
 
 dynamodb = boto3.resource("dynamodb")
 
-table = dynamodb.Table(os.environ["GIVEAWAY_ENTRY_TABLE_NAME"])
+table = dynamodb.Table(os.environ["ENTRIES_TABLE_NAME"])
 
 
 class DynamoDbGiveawayEntryRepository(GiveawayEntryRepository):

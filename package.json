@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "api:develop": "serverless offline",
-    "api:deploy": "serverless deploy",
+    "api:deploy:dev": "serverless deploy --stage=dev",
     "api:remove": "serverless remove",
     "client:deploy": "serverless client deploy",
     "client:remove": "serverless client remove"

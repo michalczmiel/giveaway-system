@@ -5,6 +5,7 @@ from api.giveaway.entry.dtos import (
     GiveawayEntryOutputDto,
 )
 from api.giveaway.entry.repositories import DynamoDbGiveawayEntryRepository
+from api.giveaway.entry.providers import SnsNotifyProvider
 
 
 class GiveawayService:
@@ -15,6 +16,8 @@ class GiveawayService:
         giveaway_entry = input_dto.map_to_model()
 
         DynamoDbGiveawayEntryRepository.persist(giveaway_entry)
+
+        SnsNotifyProvider.notify_giveaway_entered(giveaway_entry)
 
         return GiveawayEntryOutputDto.map_from(giveaway_entry)
 

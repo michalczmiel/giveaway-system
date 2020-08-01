@@ -3,11 +3,12 @@ service: giveaway-system
 provider:
   name: aws
   runtime: python3.7
-  stage: dev
-  region: eu-central-1
+  stage: ${self:opt.stage, 'dev'}
+  region: ${self:opt.region, 'eu-central-1'}
   environment:
-    GIVEAWAY_ENTRY_TABLE_NAME: ${opt:stage, self:provider.stage}-Items
-    CLIENT_DEPLOY_BUCKET_NAME: giveaway-service-client-${self:provider.stage}
+    ENTRIES_TABLE_NAME: giveaway-${opt:stage, self:provider.stage}-entries
+    ENTRIES_SNS_TOPIC: giveaway-${opt:stage, self:provider.stage}-entries
+    ENTRIES_SNS_TOPIC_ARN: ${self:custom.entriesTopicArn}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -16,7 +17,11 @@ provider:
         - dynamodb:PutItem
         - dynamodb:DeleteItem
         - dynamodb:UpdateItem
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.GIVEAWAY_ENTRY_TABLE_NAME}"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.ENTRIES_TABLE_NAME}"
+    - Effect: Allow
+      Action:
+        - "sns:*"
+      Resource: "*"
 
 plugins:
   - serverless-python-requirements
@@ -32,6 +37,7 @@ functions:
           path: giveaway/entry
           method: post
           cors: true
+
   get-giveaway-entry:
     handler: api/giveaway.entry.handlers.get_giveaway_entry
     package: {}
@@ -41,13 +47,18 @@ functions:
           method: get
           cors: true
 
+  notify-on-entry:
+    handler: api/giveaway.notify.handlers.notify_on_entry
+    events:
+      - sns: ${self:provider.environment.ENTRIES_SNS_TOPIC}
+
 resources:
   Resources:
-    GiveawayEntryTable:
+    EntriesDynamoDBTable:
       Type: "AWS::DynamoDB::Table"
       DeletionPolicy: Retain
       Properties:
-        TableName: ${self:provider.environment.GIVEAWAY_ENTRY_TABLE_NAME}
+        TableName: ${self:provider.environment.ENTRIES_TABLE_NAME}
         KeySchema:
           - AttributeName: id
             KeyType: HASH
@@ -63,8 +74,10 @@ custom:
     dockerizePip: true
     fileName: api/requirements.txt
   client:
-    bucketName: ${self:provider.environment.CLIENT_DEPLOY_BUCKET_NAME}
+    bucketName: giveaway-${self:provider.stage}-client
     distributionFolder: client/out
+  entriesTopicArn: { "Fn::Join": ["", ["arn:aws:sns:${self:provider.region}:", { "Ref": "AWS::AccountId" }, ":${self:provider.environment.ENTRIES_SNS_TOPIC}" ] ]  }
+
 
 package:
   exclude:
