@@ -2,11 +2,12 @@ from uuid import UUID, uuid4
 from dataclasses import dataclass
 
 from api.giveaway.utils.json_api import to_json_api
+from api.giveaway.common.dtos import Dto
 
 
 def test_to_json_api():
     @dataclass(frozen=True)
-    class ExampleDto:
+    class ExampleDto(Dto):
         id: UUID
         name: str
 

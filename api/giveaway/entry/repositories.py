@@ -56,7 +56,7 @@ class DynamoDbGiveawayEntryRepository(GiveawayEntryRepository):
 
     @classmethod
     def get(cls, giveaway_entry_id: UUID) -> GiveawayEntry:
-        result = table.get_item(Key={"id": str(giveaway_entry_id),})
+        result = table.get_item(Key={"id": str(giveaway_entry_id)})
 
         if "Item" not in result:
             raise NotFound("GiveawayEntry not found")

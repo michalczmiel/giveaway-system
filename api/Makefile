@@ -1,9 +1,9 @@
-.PHONY: format typecheck test
+.PHONY: format typecheck test lint
 
 PROJECT_DIR=giveaway
 TESTS_DIR=tests
 
-all: format
+all: test typecheck lint format
 
 format:
 	black ${PROJECT_DIR}
@@ -13,3 +13,6 @@ typecheck:
 
 test:
 	pytest ${TESTS_DIR}
+
+lint:
+	flake8 ${PROJECT_DIR}
