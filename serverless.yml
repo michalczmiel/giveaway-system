@@ -37,6 +37,8 @@ functions:
           path: giveaway/entry
           method: post
           cors: true
+    layers:
+      - { Ref: PythonRequirementsLambdaLayer }
 
   get-giveaway-entry:
     handler: api/giveaway.entry.handlers.get_giveaway_entry
@@ -46,11 +48,15 @@ functions:
           path: giveaway/entry/{id}
           method: get
           cors: true
+    layers:
+      - { Ref: PythonRequirementsLambdaLayer }
 
   notify-on-entry:
     handler: api/giveaway.notify.handlers.notify_on_entry
     events:
       - sns: ${self:provider.environment.ENTRIES_SNS_TOPIC}
+    layers:
+      - { Ref: PythonRequirementsLambdaLayer }
 
 resources:
   Resources:
@@ -73,6 +79,7 @@ custom:
   pythonRequirements:
     dockerizePip: true
     fileName: api/requirements.txt
+    layer: true
   client:
     bucketName: giveaway-${self:provider.stage}-client
     distributionFolder: client/out
@@ -83,6 +90,7 @@ package:
   exclude:
     - node_modules/**
     - client/**
+    - docs/**
     - api/venv/**
     - api/tests/**
     - yarn.lock
