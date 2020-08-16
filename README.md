@@ -2,6 +2,8 @@
 
 Custom giveaway system built using Cloud technologies. Used for learning serverless app development and Cloud (AWS).
 
+**Application still in development**
+
 ## Perquisites
 
 - [Node.js](https://nodejs.org/en/)
@@ -9,24 +11,22 @@ Custom giveaway system built using Cloud technologies. Used for learning serverl
 - [Python](https://www.python.org/)
 - [Docker](https://www.docker.com/)
 
+## Deployment
+
+```bash
+yarn api:deploy:dev     ## deploys api to dev stage
+yarn api:remove         ## removes api deployment
+yarn client:deploy      ## deploys client
+yarn client:remove      ## removes client deployment
+```
+
 ## Architecture
 
-![Architecture Diagram](docs/architecture.png)
+![Architecture Diagram](docs/architecture/architecture.png)
 
 The app consists of two parts: client and api.
 Client is a React.js app, built with Next.js, hosted on S3 which interacts with serverless API.
 API is written in Python and uses AWS Lambda as a runtime.
 
-Serverless approach was chosen as an API architecture because:
-
-- it offers high availability and scalability
-- it offers flexible pricing because client is charged only when the resources are used
-
-AWS was chosen because:
-
-- it offers large portfolio of services, used for building cloud services
-
-Serverless Framework was chosen because:
-
-- it eases the process of developmeny and deployment
+[Decision Records](https://adr.github.io/) are stored in [docs/adr](docs/adr)
 
