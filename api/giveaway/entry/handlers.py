@@ -9,6 +9,14 @@ from api.giveaway.utils.lambda_types import LambdaEvent
 from api.giveaway.entry.services import GiveawayService
 from api.giveaway.entry.dtos import GiveawayEntryInputDto
 from api.giveaway.common.exceptions import NotFound
+from api.giveaway.entry.repositories import DynamoDbGiveawayEntryRepository
+from api.giveaway.entry.providers import SnsNotifyProvider
+
+
+giveaway_service = GiveawayService(
+    giveaway_repository=DynamoDbGiveawayEntryRepository(),
+    notify_provider=SnsNotifyProvider(),
+)
 
 
 def create_giveaway_entry(event: LambdaEvent, context) -> Response:
@@ -20,7 +28,7 @@ def create_giveaway_entry(event: LambdaEvent, context) -> Response:
     except ValidationError as error:
         return create_response(error, status_code=http.HTTPStatus.BAD_REQUEST)
 
-    giveaway_entry_dto = GiveawayService.create_giveaway_entry(input_dto=dto)
+    giveaway_entry_dto = giveaway_service.create_giveaway_entry(input_dto=dto)
 
     result_json = to_json_api(
         giveaway_entry_dto, resource_type="giveaway-entry"
@@ -33,7 +41,7 @@ def get_giveaway_entry(event: LambdaEvent, context) -> Response:
     giveaway_entry_id = event["pathParameters"]["id"]
 
     try:
-        giveaway_entry_dto = GiveawayService.get_giveaway_entry(
+        giveaway_entry_dto = giveaway_service.get_giveaway_entry(
             giveaway_entry_id
         )
 

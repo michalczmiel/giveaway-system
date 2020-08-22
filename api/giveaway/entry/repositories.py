@@ -11,25 +11,21 @@ from api.giveaway.common.exceptions import NotFound
 
 
 class GiveawayEntryRepository(ABC):
-    @classmethod
     @abstractmethod
-    def persist(cls, giveaway_entry: GiveawayEntry) -> GiveawayEntry:
+    def persist(self, giveaway_entry: GiveawayEntry) -> GiveawayEntry:
         pass
 
-    @classmethod
     @abstractmethod
-    def get(cls, giveaway_entry: UUID) -> GiveawayEntry:
+    def get(self, giveaway_entry: UUID) -> GiveawayEntry:
         pass
-
-
-dynamodb = boto3.resource("dynamodb")
-
-table = dynamodb.Table(os.environ["ENTRIES_TABLE_NAME"])
 
 
 class DynamoDbGiveawayEntryRepository(GiveawayEntryRepository):
-    @classmethod
-    def to_model(cls, item: Dict) -> GiveawayEntry:
+    def __init__(self):
+        dynamodb = boto3.resource("dynamodb")
+        self._table = dynamodb.Table(os.environ["ENTRIES_TABLE_NAME"])
+
+    def to_model(self, item: Dict) -> GiveawayEntry:
         return GiveawayEntry(
             id=UUID(item["id"]),
             first_name=item["first_name"],
@@ -41,8 +37,7 @@ class DynamoDbGiveawayEntryRepository(GiveawayEntryRepository):
             ),
         )
 
-    @classmethod
-    def persist(cls, giveaway_entry: GiveawayEntry) -> GiveawayEntry:
+    def persist(self, giveaway_entry: GiveawayEntry) -> GiveawayEntry:
         item = {
             "id": str(giveaway_entry.id),
             "first_name": giveaway_entry.first_name,
@@ -51,15 +46,14 @@ class DynamoDbGiveawayEntryRepository(GiveawayEntryRepository):
             "gdpr_accepted": giveaway_entry.gdpr_accepted,
             "created_at": giveaway_entry.created_at.isoformat(),
         }
-        table.put_item(Item=item)
+        self._table.put_item(Item=item)
         return giveaway_entry
 
-    @classmethod
-    def get(cls, giveaway_entry_id: UUID) -> GiveawayEntry:
-        result = table.get_item(Key={"id": str(giveaway_entry_id)})
+    def get(self, giveaway_entry_id: UUID) -> GiveawayEntry:
+        result = self._table.get_item(Key={"id": str(giveaway_entry_id)})
 
         if "Item" not in result:
             raise NotFound("GiveawayEntry not found")
 
         item = result["Item"]
-        return cls.to_model(item)
+        return self.to_model(item)

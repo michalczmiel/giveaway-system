@@ -6,23 +6,21 @@ import boto3
 
 from api.giveaway.entry.models import GiveawayEntry
 
-sns = boto3.client("sns")
-
-ENTRIES_SNS_TOPIC_ARN = os.environ["ENTRIES_SNS_TOPIC_ARN"]
-
 
 class NotifyProvider(ABC):
-    @classmethod
     @abstractmethod
-    def notify_giveaway_entered(cls, entry: GiveawayEntry):
+    def notify_giveaway_entered(self, entry: GiveawayEntry):
         pass
 
 
 class SnsNotifyProvider(NotifyProvider):
-    @classmethod
-    def notify_giveaway_entered(cls, entry: GiveawayEntry):
-        sns.publish(
-            TopicArn=ENTRIES_SNS_TOPIC_ARN,
+    def __init__(self):
+        self._sns = boto3.client("sns")
+        self._topic_arn = os.environ["ENTRIES_SNS_TOPIC_ARN"]
+
+    def notify_giveaway_entered(self, entry: GiveawayEntry):
+        self._sns.publish(
+            TopicArn=self._topic_arn,
             Message=json.dumps(
                 {
                     "type": "GIVEAWAY_ENTERED",

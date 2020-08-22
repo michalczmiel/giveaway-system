@@ -4,27 +4,33 @@ from api.giveaway.entry.dtos import (
     GiveawayEntryInputDto,
     GiveawayEntryOutputDto,
 )
-from api.giveaway.entry.repositories import DynamoDbGiveawayEntryRepository
-from api.giveaway.entry.providers import SnsNotifyProvider
+from api.giveaway.entry.repositories import GiveawayEntryRepository
+from api.giveaway.entry.providers import NotifyProvider
 
 
 class GiveawayService:
-    @classmethod
+    def __init__(
+        self,
+        giveaway_repository: GiveawayEntryRepository,
+        notify_provider: NotifyProvider,
+    ):
+        self._giveaway_repository = giveaway_repository
+        self._notify_provider = notify_provider
+
     def create_giveaway_entry(
-        cls, input_dto: GiveawayEntryInputDto
+        self, input_dto: GiveawayEntryInputDto
     ) -> GiveawayEntryOutputDto:
         giveaway_entry = input_dto.map_to_model()
 
-        DynamoDbGiveawayEntryRepository.persist(giveaway_entry)
+        self._giveaway_repository.persist(giveaway_entry)
 
-        SnsNotifyProvider.notify_giveaway_entered(giveaway_entry)
+        self._notify_provider.notify_giveaway_entered(giveaway_entry)
 
         return GiveawayEntryOutputDto.map_from(giveaway_entry)
 
-    @classmethod
     def get_giveaway_entry(
-        cls, giveaway_entry_id: uuid.UUID
+        self, giveaway_entry_id: uuid.UUID
     ) -> GiveawayEntryOutputDto:
-        giveaway_entry = DynamoDbGiveawayEntryRepository.get(giveaway_entry_id)
+        giveaway_entry = self._giveaway_repository.get(giveaway_entry_id)
 
         return GiveawayEntryOutputDto.map_from(giveaway_entry)
