@@ -3,7 +3,8 @@ from unittest.mock import Mock
 from api.giveaway.entry.services import GiveawayService
 from api.giveaway.entry.repositories import GiveawayEntryRepository
 from api.giveaway.entry.providers import NotifyProvider
-from api.giveaway.entry.dtos import GiveawayEntryInputDto, GiveawayEntryOutputDto
+from api.giveaway.entry.dtos import GiveawayEntryOutputDto
+from api.tests.entry.factories import GiveawayEntryInputDtoFactory
 
 
 class TestGiveawayService:
@@ -16,12 +17,7 @@ class TestGiveawayService:
             notify_provider=notify_provider
         )
 
-        input_dto = GiveawayEntryInputDto(
-            first_name="Mike",
-            last_name="Scott",
-            email="mike.scott@dundermifflin.com",
-            gdpr_accepted=True,
-        )
+        input_dto = GiveawayEntryInputDtoFactory.create()
 
         output_dto = giveaway_service.create_giveaway_entry(input_dto)
 
