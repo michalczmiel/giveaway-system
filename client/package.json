@@ -8,7 +8,8 @@
     "export": "next build && next export",
     "start": "next start",
     "test": "jest",
-    "format": "prettier 'src/**/*.{ts,tsx}' --write"
+    "format": "prettier 'src/**/*.{ts,tsx}' --write",
+    "postinstall": "msw init public/"
   },
   "dependencies": {
     "axios": "^0.19.2",
